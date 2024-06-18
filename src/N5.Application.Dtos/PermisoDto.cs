@@ -1,15 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace N5.Domain
+namespace N5.Application.Dtos
 {
-    public class Permiso
+    public class PermisoDto
     {
-        [Key]
         public int Id { get; set; }
         public string NombreEmpleado { get; set; }
         public string ApellidoEmpleado { get; set; }
         public int TipoPermiso { get; set; }
         public DateTime FechaPermiso { get; set; }
-        public TipoPermiso TipoPermisos { get; set; }
     }
 }

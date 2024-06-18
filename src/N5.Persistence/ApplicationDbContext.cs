@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using N5.Domain;
 
 namespace N5.Persistence
 {
-    internal class ApplicationDbContext
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
     {
+        public DbSet<Permiso> Permiso { get; set; }
+        public DbSet<TipoPermiso> TipoPermiso { get; set; }
     }
 }
