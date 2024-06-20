@@ -7,5 +7,15 @@ namespace N5.Persistence
     {
         public DbSet<Permiso> Permiso { get; set; }
         public DbSet<TipoPermiso> TipoPermiso { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Permiso>()
+                .HasOne(p => p.TipoPermiso)
+                .WithMany(tp => tp.Permisos)
+                .HasForeignKey(p => p.TipoPermisoId);
+        }
     }
 }

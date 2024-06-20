@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using N5.Application.UseCases.Permisos;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,26 +10,32 @@ namespace N5.API.Controllers
     [ApiController]
     public class PermisoController : ControllerBase
     {
-        [HttpPost]
-        public async Task<IActionResult> SolicitarPermiso()
+        private readonly IMediator _mediator;
+
+        public PermisoController(IMediator mediator)
         {
-            //var response = await _mediator.Send(new GetlAllLibrosQuery());
-            return Ok();
-        }
-        
-        [HttpPut]
-        public async Task<IActionResult> ModificarPermiso()
-        {
-            //var response = await _mediator.Send(new GetlAllLibrosQuery());
-            return Ok();
+            _mediator = mediator;
         }
 
-        // GET: api/<PermisoController>
+        [HttpPost]
+        public async Task<IActionResult> SolicitarPermiso(SolicitarPermiso.SolicitarPermisoCommand command)
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+
+        [HttpPut("modificarPermiso")]
+        public async Task<IActionResult> ModificarPermiso(ModificarPermiso.ModificarPermisoCommand command)
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+
         [HttpGet]
         public async Task<IActionResult> ObtenerPermisos()
         {
-            //var response = await _mediator.Send(new GetlAllLibrosQuery());
-            return Ok();
+            var response = await _mediator.Send(new ObtenerPermiso.ObtenerPermisoRequest());
+            return Ok(response);
         }
     }
 }

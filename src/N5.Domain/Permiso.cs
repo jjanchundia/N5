@@ -8,8 +8,8 @@ namespace N5.Domain
         public int Id { get; set; }
         public string NombreEmpleado { get; set; }
         public string ApellidoEmpleado { get; set; }
-        public int TipoPermiso { get; set; }
+        public int TipoPermisoId { get; set; }
         public DateTime FechaPermiso { get; set; }
-        public TipoPermiso TipoPermisos { get; set; }
+        public TipoPermiso TipoPermiso { get; set; }
     }
 }
