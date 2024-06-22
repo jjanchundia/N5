@@ -2,9 +2,9 @@
 {
     public interface IRepository<T> where T : class
     {
-        Task SolicitarPermiso(T entidad);
-        Task ModificarPermiso(T entidad);
-        Task<IEnumerable<T>> ObtenerPermisos();
-        Task<T> ObtenerPermisoPorId(int id);
+        Task Crear(T entidad);
+        Task Modificar(T entidad);
+        Task<IEnumerable<T>> ObtenerTodo();
+        Task<T> ObtenerPorId(int id);
     }
 }

@@ -1,13 +1,15 @@
-﻿using MediatR;
+﻿using Elasticsearch.Net;
+using MediatR;
 using N5.Application.Dtos;
 using N5.Application.Servicios.Interfaces;
 using N5.Domain;
+using Nest;
 
 namespace N5.Application.UseCases.Permisos
 {
     public class ModificarPermiso
     {
-        public class ModificarPermisoCommand : IRequest<Result<PermisoDto>>
+        public class ModificarPermisoCommand : MediatR.IRequest<Result<PermisoDto>>
         {
             public int Id { get; set; }
             public required string NombreEmpleado { get; set; }
@@ -19,17 +21,26 @@ namespace N5.Application.UseCases.Permisos
         public class Handler : IRequestHandler<ModificarPermisoCommand, Result<PermisoDto>>
         {
             private readonly IUnitOfWork _unitOfWork;
+            private readonly ElasticClient _client;
 
             public Handler(IUnitOfWork unitOfWork)
             {
                 _unitOfWork = unitOfWork;
+                var pool = new SingleNodeConnectionPool(new Uri("https://localhost:9200"));
+                var settings = new ConnectionSettings(pool)
+                    .DefaultIndex("permisos")
+                        .BasicAuthentication("elastic", "f+1i_ZIx=07mu=yLB3y1")  // Agrega autenticación básica
+                        .DisableDirectStreaming()
+                        .ServerCertificateValidationCallback(CertificateValidations.AllowAll);
+
+                _client = new ElasticClient(settings);
             }
 
             public async Task<Result<PermisoDto>> Handle(ModificarPermisoCommand request, CancellationToken cancellationToken)
             {
                 try
                 {
-                    var permisoDB = _unitOfWork.PermisoRepository.ObtenerPermisoPorId(request.Id).Result;
+                    var permisoDB = _unitOfWork.PermisoRepository.ObtenerPorId(request.Id).Result;
 
                     if (permisoDB == null)
                     {
@@ -41,9 +52,47 @@ namespace N5.Application.UseCases.Permisos
                     permisoDB.TipoPermisoId = request.TipoPermisoId;
                     permisoDB.FechaPermiso = request.FechaPermiso;
 
-                    await _unitOfWork.PermisoRepository.ModificarPermiso(permisoDB);
+                    await _unitOfWork.PermisoRepository.Modificar(permisoDB);
                     await _unitOfWork.SaveChangesAsync();
 
+                    var indexName = "permisos"; 
+
+                    // Realizar la consulta por el campo PermisoId
+                    var searchResponse = await _client.SearchAsync<PermisoDto>(s => s
+                        .Index(indexName)
+                        .Query(q => q
+                            .Term(t => t.Field(f => f.PermisoId).Value(permisoDB.PermisoId))
+                        )
+                    );
+
+                    if (!searchResponse.IsValid || !searchResponse.Documents.Any())
+                    {
+                        Console.WriteLine($"No se encontró el documento con PermisoId: {request.Id}");
+                    }
+
+                    var nombrePermiso = await _unitOfWork.TipoPermisoRepository.ObtenerPorId(request.TipoPermisoId);
+
+                    var permisoDt = new PermisoDto()
+                    {
+                        NombreEmpleado = request.NombreEmpleado,
+                        ApellidoEmpleado = request.ApellidoEmpleado,
+                        TipoPermisoId = request.TipoPermisoId,
+                        FechaPermiso = request.FechaPermiso,
+                        NombreTipoPermiso = nombrePermiso.Descripcion,
+                        PermisoId = request.Id,
+                        IdPermisoE = permisoDB.IdPermisoE ?? ""
+                    };
+
+                    foreach (var document in searchResponse.Documents)
+                    {
+                        var documentPath = new DocumentPath<PermisoDto>(permisoDt.IdPermisoE).Index(indexName);
+
+                        var responses = await _client.UpdateAsync<PermisoDto, object>(documentPath, u => u
+                            .Doc(permisoDt) // Los campos a actualizar en el documento
+                            .RetryOnConflict(3)   // Opcional: Número de intentos en caso de conflictos
+                            .Refresh(Refresh.True)
+                        );
+                    }
 
                     return Result<PermisoDto>.Success(new PermisoDto
                     {

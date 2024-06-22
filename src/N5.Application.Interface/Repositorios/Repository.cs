@@ -14,22 +14,22 @@ namespace N5.Application.Servicios.Repositorios
             _dbSet = _context.Set<T>();
         }
 
-        public async Task SolicitarPermiso(T entidad)
+        public async Task Crear(T entidad)
         {
             await _dbSet.AddAsync(entidad);
         }
 
-        public async Task ModificarPermiso(T entidad)
+        public async Task Modificar(T entidad)
         {
             _dbSet.Update(entidad);
         }
 
-        public async Task<IEnumerable<T>> ObtenerPermisos()
+        public async Task<IEnumerable<T>> ObtenerTodo()
         {
             return await _dbSet.ToListAsync();
         }
 
-        public async Task<T> ObtenerPermisoPorId(int id)
+        public async Task<T> ObtenerPorId(int id)
         {
             return await _dbSet.FindAsync(id);
         }

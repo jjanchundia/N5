@@ -8,6 +8,7 @@ namespace N5.Application.Servicios.Repositorios
     {
         private readonly ApplicationDbContext _context;
         private IRepository<Permiso> _permisoRepository;
+        private IRepository<TipoPermiso> _tipoPermisoRepository;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -17,6 +18,11 @@ namespace N5.Application.Servicios.Repositorios
         public IRepository<Permiso> PermisoRepository
         {
             get { return _permisoRepository ??= new Repository<Permiso>(_context); }
+        }
+
+        public IRepository<TipoPermiso> TipoPermisoRepository
+        {
+            get { return _tipoPermisoRepository ??= new Repository<TipoPermiso>(_context); }
         }
 
         public async Task<int> SaveChangesAsync()
