@@ -38,6 +38,7 @@ namespace N5.Application.UseCases.Permisos
 
                 foreach (var item in permisos)
                 {
+                    var p = await _unitOfWork.TipoPermisoRepository.ObtenerPorId(item.TipoPermisoId);
                     var permisoDto = new PermisoDto
                     {
                         PermisoId = item.PermisoId,
@@ -45,7 +46,8 @@ namespace N5.Application.UseCases.Permisos
                         ApellidoEmpleado = item.ApellidoEmpleado,
                         FechaPermiso = item.FechaPermiso,
                         TipoPermisoId = item.TipoPermisoId,
-                        IdPermisoE = item.IdPermisoE
+                        IdPermisoE = item.IdPermisoE,
+                        NombreTipoPermiso = p.Descripcion
                     };
 
                     permisosDto.Add(permisoDto);

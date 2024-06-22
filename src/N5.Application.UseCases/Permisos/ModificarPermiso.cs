@@ -40,19 +40,19 @@ namespace N5.Application.UseCases.Permisos
             {
                 try
                 {
-                    var permisoDB = _unitOfWork.PermisoRepository.ObtenerPorId(request.Id).Result;
+                    var tipoPermisoDB = _unitOfWork.PermisoRepository.ObtenerPorId(request.Id).Result;
 
-                    if (permisoDB == null)
+                    if (tipoPermisoDB == null)
                     {
                         return Result<PermisoDto>.Failure("No se encontró Permiso para actualizar!");
                     }
 
-                    permisoDB.NombreEmpleado = request.NombreEmpleado;
-                    permisoDB.ApellidoEmpleado = request.ApellidoEmpleado;
-                    permisoDB.TipoPermisoId = request.TipoPermisoId;
-                    permisoDB.FechaPermiso = request.FechaPermiso;
+                    tipoPermisoDB.NombreEmpleado = request.NombreEmpleado;
+                    tipoPermisoDB.ApellidoEmpleado = request.ApellidoEmpleado;
+                    tipoPermisoDB.TipoPermisoId = request.TipoPermisoId;
+                    tipoPermisoDB.FechaPermiso = request.FechaPermiso;
 
-                    await _unitOfWork.PermisoRepository.Modificar(permisoDB);
+                    await _unitOfWork.PermisoRepository.Modificar(tipoPermisoDB);
                     await _unitOfWork.SaveChangesAsync();
 
                     var indexName = "permisos"; 
@@ -61,7 +61,7 @@ namespace N5.Application.UseCases.Permisos
                     var searchResponse = await _client.SearchAsync<PermisoDto>(s => s
                         .Index(indexName)
                         .Query(q => q
-                            .Term(t => t.Field(f => f.PermisoId).Value(permisoDB.PermisoId))
+                            .Term(t => t.Field(f => f.PermisoId).Value(tipoPermisoDB.PermisoId))
                         )
                     );
 
@@ -80,7 +80,7 @@ namespace N5.Application.UseCases.Permisos
                         FechaPermiso = request.FechaPermiso,
                         NombreTipoPermiso = nombrePermiso.Descripcion,
                         PermisoId = request.Id,
-                        IdPermisoE = permisoDB.IdPermisoE ?? ""
+                        IdPermisoE = tipoPermisoDB.IdPermisoE ?? ""
                     };
 
                     foreach (var document in searchResponse.Documents)

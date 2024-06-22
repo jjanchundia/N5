@@ -19,9 +19,30 @@ namespace N5.API.Controllers
 
         // GET: api/<TipoPermisoController>
         [HttpGet]
-        public async Task<IActionResult> ObtenerPermisos(int id)
+        public async Task<IActionResult> ObtenerTipoPermisos()
+        {
+            var response = await _mediator.Send(new ObtenerTiposPermisos.ObtenerTiposPermisosRequest());
+            return Ok(response);
+        }
+
+        [HttpGet("obtenerTipoPermisoPorId")]
+        public async Task<IActionResult> ObtenerPermisoPorId(int id)
         {
             var response = await _mediator.Send(new ObtenerTipoPermisoPorId.ObtenerTipoPermisoPorIdRequest() { Id = id });
+            return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CrearTipoPermiso(CrearTipoPermiso.CrearTipoPermisoCommand command)
+        {
+            var response = await _mediator.Send(command);
+            return Ok(response);
+        }
+
+        [HttpPut("modificarTipoPermiso")]
+        public async Task<IActionResult> ModificarTipoPermiso(ModificarTipoPermiso.ModificarTipoPermisoCommand command)
+        {
+            var response = await _mediator.Send(command);
             return Ok(response);
         }
     }

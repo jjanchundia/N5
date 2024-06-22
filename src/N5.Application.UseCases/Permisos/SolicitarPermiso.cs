@@ -11,7 +11,6 @@ namespace N5.Application.UseCases.Permisos
     {
         public class SolicitarPermisoCommand : MediatR.IRequest<Result<PermisoDto>>
         {
-            public int Id { get; set; }
             public string NombreEmpleado { get; set; }
             public string ApellidoEmpleado { get; set; }
             public int TipoPermisoId { get; set; }
@@ -82,14 +81,14 @@ namespace N5.Application.UseCases.Permisos
                     }
                     else
                     {
-                        Console.WriteLine($"Failed to index document: {response.ServerError.Error.Reason}");
+                        Console.WriteLine($"Failed to index document: {response.ServerError}");
                     }
 
                     var idE = response.Id;
 
-                    var permisoDB = _unitOfWork.PermisoRepository.ObtenerPorId(idP).Result;
-                    permisoDB.IdPermisoE = idE;
-                    await _unitOfWork.PermisoRepository.Modificar(permisoDB);
+                    var tipoPermisoDB = _unitOfWork.PermisoRepository.ObtenerPorId(idP).Result;
+                    tipoPermisoDB.IdPermisoE = idE;
+                    await _unitOfWork.PermisoRepository.Modificar(tipoPermisoDB);
                     await _unitOfWork.SaveChangesAsync();
 
                     return Result<PermisoDto>.Success(new PermisoDto

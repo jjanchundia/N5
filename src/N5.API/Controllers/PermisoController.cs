@@ -37,5 +37,13 @@ namespace N5.API.Controllers
             var response = await _mediator.Send(new ObtenerPermiso.ObtenerPermisoRequest());
             return Ok(response);
         }
+
+        [HttpGet("obtenerPermisoPorId")]
+        public async Task<IActionResult> ObtenerPermisoPorId(int permisoId)
+        {
+            var response = await _mediator.Send(new ObtenerPermisoPorId.ObtenerPermisoPorIdRequest() { PermisoId = permisoId });
+            return Ok(response);
+        }
+
     }
 }

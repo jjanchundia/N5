@@ -48,7 +48,11 @@ var client = new ElasticClient(settings);
 builder.Services.AddSingleton<IElasticClient>(client);
 
 builder.Services.AddScoped<IRequestHandler<ObtenerTipoPermisoPorId.ObtenerTipoPermisoPorIdRequest, Result<TipoPermisoDto>>, ObtenerTipoPermisoPorId.Handler>();
+builder.Services.AddScoped<IRequestHandler<ObtenerTiposPermisos.ObtenerTiposPermisosRequest, Result<List<TipoPermisoDto>>>, ObtenerTiposPermisos.Handler>();
+builder.Services.AddScoped<IRequestHandler<CrearTipoPermiso.CrearTipoPermisoCommand, Result<TipoPermisoDto>>, CrearTipoPermiso.Handler>();
+builder.Services.AddScoped<IRequestHandler<ModificarTipoPermiso.ModificarTipoPermisoCommand, Result<TipoPermisoDto>>, ModificarTipoPermiso.Handler>();
 builder.Services.AddScoped<IRequestHandler<ObtenerPermiso.ObtenerPermisoRequest, Result<List<PermisoDto>>>, ObtenerPermiso.Handler>();
+builder.Services.AddScoped<IRequestHandler<ObtenerPermisoPorId.ObtenerPermisoPorIdRequest, Result<PermisoDto>>, ObtenerPermisoPorId.Handler>();
 builder.Services.AddScoped<IRequestHandler<SolicitarPermiso.SolicitarPermisoCommand, Result<PermisoDto>>, SolicitarPermiso.Handler>();
 builder.Services.AddScoped<IRequestHandler<ModificarPermiso.ModificarPermisoCommand, Result<PermisoDto>>, ModificarPermiso.Handler>();
 
